@@ -3,7 +3,7 @@
 
 {% block content %}
 <div style="text-align: center; max-width: 500px; margin: 4rem auto;">
-    <form action="{% url 'accountapp:update' pk=user.pk %}" method="post">
+    <form action="{% url 'accountapp:update' pk=target_user.pk %}" method="post">
         <h4>Change Info</h4>
         {% csrf_token %}
         {% bootstrap_form form %}

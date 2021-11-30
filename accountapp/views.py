@@ -7,9 +7,15 @@ from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AccountUpdateForm
-# Create your views here.
-def hello_world(request):
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from .decorators import account_onwership_required
 
+# Create your views here.
+has_ownership = [account_onwership_required, login_required]
+
+@login_required
+def hello_world(request):
     if request.method == "POST":
         temp = request.POST.get('hello_world_input')
         new_hello_world = HelloWorld()
@@ -36,13 +42,19 @@ class AccountDetailView(DetailView):
     context_object_name = 'target_user'
     template_name = 'accountapp/detail.html'
 
+@method_decorator(has_ownership, 'get')
+@method_decorator(has_ownership, 'post')
 class AccountUpdateView(UpdateView):
     model = User
     form_class = AccountUpdateForm  
+    context_object_name = 'target_user'
     success_url = reverse_lazy('accountapp:hello_world')
     template_name = 'accountapp/update.html'
 
+@method_decorator(has_ownership, 'get')
+@method_decorator(has_ownership, 'post')
 class AccountDeleteView(DeleteView):
     model = User    
+    context_object_name = 'target_user'
     success_url = reverse_lazy('accountapp:login')
     template_name = 'accountapp/delete.html'
